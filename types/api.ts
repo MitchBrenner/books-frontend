@@ -12,3 +12,11 @@ export type CreateUserInput = {
   firstName?: string;
   lastName?: string;
 };
+
+export type Book = {
+  id: string;
+  title: string;
+  author: string;
+  year: number | null;
+  coverId: number | null;
+};

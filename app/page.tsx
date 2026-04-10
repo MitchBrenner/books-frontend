@@ -1,36 +1,36 @@
 "use client";
 
+import { AppNav } from "@/components/navigation/app-nav";
 import type { User } from "@/types/api";
-import { useState } from "react";
+import { getStoredUser, subscribeToSession } from "@/lib/session";
+import { useSyncExternalStore } from "react";
 import Login from "./login/page";
 
-const LOCAL_STORAGE_KEY = "books.currentUser";
-
-function getStoredUser(): User | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  const storedUser = localStorage.getItem(LOCAL_STORAGE_KEY);
-
-  if (!storedUser) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(storedUser) as User;
-  } catch {
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
-    return null;
-  }
-}
-
 export default function Home() {
-  const [currentUser] = useState<User | null>(getStoredUser);
+  const currentUser = useSyncExternalStore<User | null>(
+    subscribeToSession,
+    getStoredUser,
+    () => null,
+  );
 
   if (!currentUser) {
     return <Login />;
   }
 
-  return <div>Logged in as {currentUser.username}</div>;
+  return (
+    <div className="min-h-screen bg-background">
+      <AppNav />
+      <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10">
+        <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">
+          Feed
+        </p>
+        <h1 className="text-4xl font-semibold tracking-tight">
+          Welcome back, {currentUser.username}
+        </h1>
+        <p className="max-w-2xl text-base text-muted-foreground">
+          Follow your friends to see what they are reading.
+        </p>
+      </main>
+    </div>
+  );
 }
