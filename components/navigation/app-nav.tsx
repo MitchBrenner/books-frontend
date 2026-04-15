@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -13,6 +14,12 @@ const navItems = [
 
 export function AppNav() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    router.push("/");
+  }
 
   return (
     <header className="border-b border-border bg-card/80 backdrop-blur">
@@ -24,7 +31,8 @@ export function AppNav() {
           <span className="text-lg font-semibold">Your shelf, socialized</span>
         </div>
 
-        <nav className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
+          <nav className="flex items-center gap-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
 
@@ -39,9 +47,12 @@ export function AppNav() {
               </Button>
             );
           })}
-        </nav>
+          </nav>
+          <Button type="button" variant="outline" onClick={handleSignOut}>
+            Sign out
+          </Button>
+        </div>
       </div>
     </header>
   );
 }
-

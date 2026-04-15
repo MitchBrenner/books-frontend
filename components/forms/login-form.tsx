@@ -2,44 +2,45 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getUserByUsername } from "@/lib/api/users";
+import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const LOCAL_STORAGE_KEY = "books.currentUser";
-
 export function LoginForm() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [savedMessage, setSavedMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const trimmedUsername = username.trim();
+    const trimmedEmail = email.trim();
 
-    if (!trimmedUsername) {
-      setError("Username is required.");
-      setSavedMessage(null);
+    if (!trimmedEmail || !password) {
+      setError("Email and password are required.");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const user = await getUserByUsername(trimmedUsername);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: trimmedEmail,
+        password,
+      });
 
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(user));
+      if (error) {
+        throw error;
+      }
 
       setError(null);
-      setSavedMessage(`Signed in as ${user.username}.`);
-      setUsername("");
+      setEmail("");
+      setPassword("");
       router.push("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to sign in");
-      setSavedMessage(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -48,26 +49,36 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <label htmlFor="username" className="text-sm font-medium">
-          Username
+        <label htmlFor="email" className="text-sm font-medium">
+          Email
         </label>
         <Input
-          id="username"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Enter your username"
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="password" className="text-sm font-medium">
+          Password
+        </label>
+        <Input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter your password"
         />
       </div>
 
       <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Signing in..." : "Continue"}
+        {isSubmitting ? "Signing in..." : "Sign in"}
       </Button>
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
-      {savedMessage ? (
-        <p className="text-sm text-muted-foreground">{savedMessage}</p>
-      ) : null}
     </form>
   );
 }

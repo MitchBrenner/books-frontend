@@ -19,7 +19,7 @@ export function Login() {
 
         {page === "login" && (
           <div className="flex flex-col gap-3">
-            <h2 className="text-lg font-medium">Sign in with a username</h2>
+            <h2 className="text-lg font-medium">Sign in with email</h2>
             <LoginForm />
             <p className="text-sm text-muted-foreground">
               Don&apos;t have an account?{" "}

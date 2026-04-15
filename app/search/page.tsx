@@ -4,23 +4,23 @@ import { BookCard } from "@/components/books/book-card";
 import { AppNav } from "@/components/navigation/app-nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { Book, User } from "@/types/api";
-import { getStoredUser, subscribeToSession } from "@/lib/session";
-import { useState, useSyncExternalStore } from "react";
+import { useAuth } from "@/lib/auth/use-auth";
+import type { Book } from "@/types/api";
+import { useState } from "react";
 import Login from "../login/page";
 import { getBooksByQuery } from "@/lib/api/books";
 
 export default function SearchPage() {
-  const currentUser = useSyncExternalStore<User | null>(
-    subscribeToSession,
-    getStoredUser,
-    () => null,
-  );
+  const { user, isLoading } = useAuth();
   const [query, setQuery] = useState("");
   const [books, setBooks] = useState<Book[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
-  if (!currentUser) {
+  if (isLoading) {
+    return null;
+  }
+
+  if (!user) {
     return <Login />;
   }
 

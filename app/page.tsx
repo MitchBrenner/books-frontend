@@ -1,19 +1,17 @@
 "use client";
 
 import { AppNav } from "@/components/navigation/app-nav";
-import type { User } from "@/types/api";
-import { getStoredUser, subscribeToSession } from "@/lib/session";
-import { useSyncExternalStore } from "react";
+import { useAuth } from "@/lib/auth/use-auth";
 import Login from "./login/page";
 
 export default function Home() {
-  const currentUser = useSyncExternalStore<User | null>(
-    subscribeToSession,
-    getStoredUser,
-    () => null,
-  );
+  const { user, isLoading } = useAuth();
 
-  if (!currentUser) {
+  if (isLoading) {
+    return null;
+  }
+
+  if (!user) {
     return <Login />;
   }
 
@@ -25,7 +23,7 @@ export default function Home() {
           Feed
         </p>
         <h1 className="text-4xl font-semibold tracking-tight">
-          Welcome back, {currentUser.username}
+          Welcome back, {user.user_metadata.username ?? user.email}
         </h1>
         <p className="max-w-2xl text-base text-muted-foreground">
           Follow your friends to see what they are reading.
