@@ -1,0 +1,21 @@
+"use client";
+
+import { useAuth } from "@/lib/auth/use-auth";
+
+export default function Home() {
+  const { user } = useAuth();
+
+  return (
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-10">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">Feed</p>
+        <h1 className="text-4xl font-semibold tracking-tight">
+          Welcome back, {user?.user_metadata.username ?? user?.email}
+        </h1>
+        <p className="mt-1 max-w-2xl text-base text-muted-foreground">
+          Follow your friends to see what they are reading.
+        </p>
+      </div>
+    </main>
+  );
+}
