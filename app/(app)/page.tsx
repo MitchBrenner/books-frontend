@@ -8,11 +8,11 @@ export default function Home() {
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-10">
       <div className="flex flex-col gap-2">
-        <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">Feed</p>
-        <h1 className="text-4xl font-semibold tracking-tight">
+        <p className="text-sm font-medium uppercase tracking-[0.3em] text-[#4a7c59]">Feed</p>
+        <h1 className="text-4xl font-semibold tracking-tight text-[#1a2e1f]">
           Welcome back, {user?.user_metadata.username ?? user?.email}
         </h1>
-        <p className="mt-1 max-w-2xl text-base text-muted-foreground">
+        <p className="mt-1 max-w-2xl text-base text-[#6b7f6e]">
           Follow your friends to see what they are reading.
         </p>
       </div>

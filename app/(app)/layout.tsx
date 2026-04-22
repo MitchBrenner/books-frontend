@@ -11,7 +11,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   if (!user) return <Login />;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#faf8f4]">
       <AppNav />
       {children}
     </div>

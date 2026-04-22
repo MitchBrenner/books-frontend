@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -13,7 +12,7 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const trimmedEmail = email.trim();
@@ -47,9 +46,9 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <label htmlFor="email" className="text-sm font-medium">
+    <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="email" className="text-sm font-medium text-[#1a2e1f]">
           Email
         </label>
         <Input
@@ -57,12 +56,13 @@ export function LoginForm() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
+          placeholder="you@example.com"
+          className="h-11 px-4 rounded-md border-[#c8d9c4] bg-white focus-visible:ring-[#3d6449]"
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="password" className="text-sm font-medium">
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="password" className="text-sm font-medium text-[#1a2e1f]">
           Password
         </label>
         <Input
@@ -70,13 +70,18 @@ export function LoginForm() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter your password"
+          placeholder="••••••••"
+          className="h-11 px-4 rounded-md border-[#c8d9c4] bg-white focus-visible:ring-[#3d6449]"
         />
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="mt-2 w-full rounded-md bg-[#2d4a35] py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#3d6449] disabled:opacity-60"
+      >
         {isSubmitting ? "Signing in..." : "Sign in"}
-      </Button>
+      </button>
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
     </form>
