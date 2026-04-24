@@ -26,6 +26,10 @@ export function ShelfView() {
     void loadMyBooks();
   }, []);
 
+  const totalPagesRead = savedBooks
+    .filter((b) => b.status === "read" && b.book?.pages)
+    .reduce((sum, b) => sum + (b.book?.pages ?? 0), 0);
+
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-end justify-between gap-4">
@@ -37,7 +41,10 @@ export function ShelfView() {
             Books you&apos;ve saved
           </h2>
         </div>
-        <p className="text-sm text-[#6b7f6e]">{savedBooks.length} saved</p>
+        <div className="flex flex-col items-end gap-1 text-sm text-[#6b7f6e]">
+          <span>{savedBooks.length} saved</span>
+          {totalPagesRead > 0 ? <span>{totalPagesRead.toLocaleString()} pages read</span> : null}
+        </div>
       </div>
 
       {error ? <p className="text-sm text-[#9b4b4b]">{error}</p> : null}

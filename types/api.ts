@@ -19,6 +19,7 @@ export type Book = {
   author: string;
   year: number | null;
   coverId: number | null;
+  pages: number | null;
 };
 
 export type UserBookStatus = "want_to_read" | "reading" | "read" | "dnf";
