@@ -20,3 +20,28 @@ export type Book = {
   year: number | null;
   coverId: number | null;
 };
+
+export type UserBookStatus = "want_to_read" | "reading" | "read" | "dnf";
+
+export type UserBook = {
+  id: string;
+  userId: string;
+  bookId: string;
+  status: UserBookStatus;
+  rating?: number | null;
+  review?: string | null;
+  startedAt?: string | null;
+  finishedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  book?: Book;
+};
+
+export type CreateUserBookInput = {
+  bookId: string;
+  status: UserBookStatus;
+  rating?: number | null;
+  review?: string | null;
+  startedAt?: string | null;
+  finishedAt?: string | null;
+};

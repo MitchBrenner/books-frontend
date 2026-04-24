@@ -23,7 +23,7 @@ export function Login() {
 
         <div className="relative z-10 flex flex-col gap-6">
           <blockquote className="text-3xl font-semibold leading-snug text-[#f0ebe0]">
-            "A reader lives a thousand lives before he dies."
+            &ldquo;A reader lives a thousand lives before he dies.&rdquo;
           </blockquote>
           <p className="text-sm text-[#a8c5a0]">— George R.R. Martin</p>
         </div>

@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpen, LogOut, Search, Newspaper } from "lucide-react";
+import { BookOpen, LibraryBig, LogOut, Search, Newspaper } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/", label: "Feed", icon: Newspaper },
+  { href: "/shelf", label: "Shelf", icon: LibraryBig },
   { href: "/search", label: "Search", icon: Search },
 ];
 
