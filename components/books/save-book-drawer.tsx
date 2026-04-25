@@ -80,16 +80,6 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, book?.id]);
 
-  function handleStatusChange(newStatus: UserBookStatus) {
-    setStatus(newStatus);
-    if (newStatus === "want_to_read" || newStatus === "dnf") {
-      setStartedAt("");
-      setFinishedAt("");
-    } else if (newStatus === "reading") {
-      setFinishedAt("");
-    }
-  }
-
   const title = useMemo(() => book?.title ?? "Book", [book?.title]);
 
   if (!book || !isOpen) return null;
@@ -179,7 +169,7 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
             <select
               id="status"
               value={status}
-              onChange={(event) => handleStatusChange(event.target.value as UserBookStatus)}
+              onChange={(event) => setStatus(event.target.value as UserBookStatus)}
               className="h-11 rounded-md border border-[#c8d9c4] bg-white px-3 text-sm text-[#1a2e1f] outline-none transition focus:border-[#3d6449]"
             >
               {STATUS_OPTIONS.map((option) => (
