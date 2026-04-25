@@ -46,3 +46,11 @@ export type CreateUserBookInput = {
   startedAt?: string | null;
   finishedAt?: string | null;
 };
+
+export type UpdateUserBookInput = {
+  status?: UserBookStatus;
+  rating?: number | null;
+  review?: string | null;
+  startedAt?: string | null;
+  finishedAt?: string | null;
+};
