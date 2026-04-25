@@ -133,18 +133,20 @@ export default function SearchPage() {
         )}
       </main>
 
-      <SaveBookDrawer
-        book={selectedBook}
-        isOpen={selectedBook !== null}
-        onClose={() => setSelectedBook(null)}
-        onSaved={(bookId) => {
-          const savedBook = books.find((book) => book.id === bookId);
-
-          if (savedBook) {
-            handleBookSaved(savedBook);
-          }
-        }}
-      />
+      {selectedBook ? (
+        <SaveBookDrawer
+          mode="save"
+          book={selectedBook}
+          isOpen={true}
+          onClose={() => setSelectedBook(null)}
+          onSaved={(bookId) => {
+            const savedBook = books.find((book) => book.id === bookId);
+            if (savedBook) {
+              handleBookSaved(savedBook);
+            }
+          }}
+        />
+      ) : null}
     </>
   );
 }

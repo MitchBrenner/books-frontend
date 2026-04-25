@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 
 import { BookCard } from "@/components/books/book-card";
+import { SaveBookDrawer } from "@/components/books/save-book-drawer";
 import { getMyBooks } from "@/lib/api/user-books";
-import type { UserBook } from "@/types/api";
+import type { UpdateUserBookInput, UserBook } from "@/types/api";
 
 export function ShelfView() {
   const [savedBooks, setSavedBooks] = useState<UserBook[]>([]);
   const [isLoadingBooks, setIsLoadingBooks] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingBook, setEditingBook] = useState<UserBook | null>(null);
 
   useEffect(() => {
     async function loadMyBooks() {
@@ -25,6 +27,18 @@ export function ShelfView() {
 
     void loadMyBooks();
   }, []);
+
+  function handleUpdated(userBookId: string, data: UpdateUserBookInput) {
+    setSavedBooks((prev) =>
+      prev.map((b) =>
+        b.id === userBookId ? { ...b, ...data } : b,
+      ),
+    );
+  }
+
+  function handleDeleted(userBookId: string) {
+    setSavedBooks((prev) => prev.filter((b) => b.id !== userBookId));
+  }
 
   const totalPagesRead = savedBooks
     .filter((b) => b.status === "read" && b.book?.pages)
@@ -63,19 +77,37 @@ export function ShelfView() {
         <div className="grid gap-3">
           {savedBooks.map((savedBook) =>
             savedBook.book ? (
-              <BookCard
+              <button
                 key={savedBook.id}
-                book={savedBook.book}
-                subtitle={
-                  <div className="flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-[#6b7f6e]">
-                    <span>{savedBook.status.replaceAll("_", " ")}</span>
-                    {savedBook.rating ? <span>{savedBook.rating} stars</span> : null}
-                  </div>
-                }
-              />
+                type="button"
+                className="text-left"
+                onClick={() => setEditingBook(savedBook)}
+              >
+                <BookCard
+                  book={savedBook.book}
+                  subtitle={
+                    <div className="flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-[#6b7f6e]">
+                      <span>{savedBook.status.replaceAll("_", " ")}</span>
+                      {savedBook.rating ? <span>{savedBook.rating} stars</span> : null}
+                    </div>
+                  }
+                />
+              </button>
             ) : null,
           )}
         </div>
+      ) : null}
+
+      {editingBook?.book ? (
+        <SaveBookDrawer
+          mode="edit"
+          book={editingBook.book}
+          userBook={editingBook}
+          isOpen={true}
+          onClose={() => setEditingBook(null)}
+          onUpdated={handleUpdated}
+          onDeleted={handleDeleted}
+        />
       ) : null}
     </section>
   );
