@@ -12,10 +12,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   if (!user) return <Login />;
 
   return (
-    <div className="min-h-screen bg-[#faf8f4]">
+    <div className="flex min-h-screen bg-white">
       <Toaster position="top-right" />
       <AppNav />
-      {children}
+      <div className="flex-1 pl-60">{children}</div>
     </div>
   );
 }

@@ -30,9 +30,7 @@ export function ShelfView() {
 
   function handleUpdated(userBookId: string, data: UpdateUserBookInput) {
     setSavedBooks((prev) =>
-      prev.map((b) =>
-        b.id === userBookId ? { ...b, ...data } : b,
-      ),
+      prev.map((b) => (b.id === userBookId ? { ...b, ...data } : b)),
     );
   }
 
@@ -45,50 +43,49 @@ export function ShelfView() {
     .reduce((sum, b) => sum + (b.book?.pages ?? 0), 0);
 
   return (
-    <section className="flex flex-col gap-4">
-      <div className="flex items-end justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#4a7c59]">
-            Your shelf
-          </p>
-          <h2 className="text-2xl font-semibold tracking-tight text-[#1a2e1f]">
-            Books you&apos;ve saved
-          </h2>
-        </div>
-        <div className="flex flex-col items-end gap-1 text-sm text-[#6b7f6e]">
-          <span>{savedBooks.length} saved</span>
-          {totalPagesRead > 0 ? <span>{totalPagesRead.toLocaleString()} pages read</span> : null}
+    <section className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-black">Your shelf</h1>
+        <div className="flex flex-col items-end gap-0.5 text-sm text-gray-400">
+          <span>{savedBooks.length} books</span>
+          {totalPagesRead > 0 ? (
+            <span>{totalPagesRead.toLocaleString()} pages read</span>
+          ) : null}
         </div>
       </div>
 
-      {error ? <p className="text-sm text-[#9b4b4b]">{error}</p> : null}
+      {error ? <p className="text-sm text-red-500">{error}</p> : null}
 
       {isLoadingBooks ? (
-        <p className="text-sm text-[#6b7f6e]">Loading your shelf...</p>
+        <p className="text-sm text-gray-400">Loading...</p>
       ) : null}
 
       {!isLoadingBooks && savedBooks.length === 0 ? (
-        <p className="text-sm text-[#6b7f6e]">
-          You haven&apos;t saved any books yet. Search for one and add it to your shelf.
+        <p className="text-sm text-gray-500">
+          No books yet. Search for one and add it to your shelf.
         </p>
       ) : null}
 
       {savedBooks.length > 0 ? (
-        <div className="grid gap-3">
+        <div className="flex flex-col gap-2">
           {savedBooks.map((savedBook) =>
             savedBook.book ? (
               <button
                 key={savedBook.id}
                 type="button"
-                className="text-left"
+                className="w-full cursor-pointer text-left"
                 onClick={() => setEditingBook(savedBook)}
               >
                 <BookCard
                   book={savedBook.book}
                   subtitle={
-                    <div className="flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-[#6b7f6e]">
-                      <span>{savedBook.status.replaceAll("_", " ")}</span>
-                      {savedBook.rating ? <span>{savedBook.rating} stars</span> : null}
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-gray-400">
+                      <span className="capitalize">
+                        {savedBook.status.replaceAll("_", " ")}
+                      </span>
+                      {savedBook.rating ? (
+                        <span>· {savedBook.rating} stars</span>
+                      ) : null}
                     </div>
                   }
                 />

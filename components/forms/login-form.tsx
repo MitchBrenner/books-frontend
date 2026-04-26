@@ -1,9 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export function LoginForm() {
   const router = useRouter();
@@ -30,9 +30,7 @@ export function LoginForm() {
         password,
       });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       setError(null);
       setEmail("");
@@ -48,7 +46,7 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="email" className="text-sm font-medium text-[#1a2e1f]">
+        <label htmlFor="email" className="text-sm font-medium text-gray-900">
           Email
         </label>
         <Input
@@ -57,12 +55,12 @@ export function LoginForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
-          className="h-11 px-4 rounded-md border-[#c8d9c4] bg-white focus-visible:ring-[#3d6449]"
+          className="h-10 rounded-lg border-gray-200 bg-white px-4 focus-visible:border-black focus-visible:ring-0"
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="password" className="text-sm font-medium text-[#1a2e1f]">
+        <label htmlFor="password" className="text-sm font-medium text-gray-900">
           Password
         </label>
         <Input
@@ -71,19 +69,19 @@ export function LoginForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
-          className="h-11 px-4 rounded-md border-[#c8d9c4] bg-white focus-visible:ring-[#3d6449]"
+          className="h-10 rounded-lg border-gray-200 bg-white px-4 focus-visible:border-black focus-visible:ring-0"
         />
       </div>
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="mt-2 w-full rounded-md bg-[#2d4a35] py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#3d6449] disabled:opacity-60"
+        className="mt-2 w-full cursor-pointer rounded-lg bg-black py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
       >
         {isSubmitting ? "Signing in..." : "Sign in"}
       </button>
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? <p className="text-sm text-red-500">{error}</p> : null}
     </form>
   );
 }
