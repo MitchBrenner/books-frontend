@@ -3,9 +3,20 @@
 import { type SyntheticEvent, useEffect, useMemo, useState } from "react";
 import { Plus, Save, Star, Trash2, X } from "lucide-react";
 
-import { deleteMyBook, saveBookToMyShelf, updateMyBook } from "@/lib/api/user-books";
-import type { Book, CreateUserBookInput, UpdateUserBookInput, UserBook, UserBookStatus } from "@/types/api";
+import {
+  deleteMyBook,
+  saveBookToMyShelf,
+  updateMyBook,
+} from "@/lib/api/user-books";
+import type {
+  Book,
+  CreateUserBookInput,
+  UpdateUserBookInput,
+  UserBook,
+  UserBookStatus,
+} from "@/types/api";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 type SaveBookDrawerProps =
   | {
@@ -40,11 +51,16 @@ function toDateInputValue(value: string | null | undefined): string {
 export function SaveBookDrawer(props: SaveBookDrawerProps) {
   const { book, isOpen, onClose } = props;
 
-  const initialStatus = props.mode === "edit" ? props.userBook.status : "want_to_read";
-  const initialRating = props.mode === "edit" ? (props.userBook.rating ?? null) : null;
-  const initialReview = props.mode === "edit" ? (props.userBook.review ?? "") : "";
-  const initialStartedAt = props.mode === "edit" ? toDateInputValue(props.userBook.startedAt) : "";
-  const initialFinishedAt = props.mode === "edit" ? toDateInputValue(props.userBook.finishedAt) : "";
+  const initialStatus =
+    props.mode === "edit" ? props.userBook.status : "want_to_read";
+  const initialRating =
+    props.mode === "edit" ? (props.userBook.rating ?? null) : null;
+  const initialReview =
+    props.mode === "edit" ? (props.userBook.review ?? "") : "";
+  const initialStartedAt =
+    props.mode === "edit" ? toDateInputValue(props.userBook.startedAt) : "";
+  const initialFinishedAt =
+    props.mode === "edit" ? toDateInputValue(props.userBook.finishedAt) : "";
 
   const [status, setStatus] = useState<UserBookStatus>(initialStatus);
   const [rating, setRating] = useState<number | null>(initialRating);
@@ -77,7 +93,7 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
       setFinishedAt("");
     }
     setError(null);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, book?.id]);
 
   const title = useMemo(() => book?.title ?? "Book", [book?.title]);
@@ -95,22 +111,24 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
           status,
           rating: showRating ? rating : null,
           review: review.trim() || null,
-          startedAt: showStartedAt ? (startedAt || null) : null,
-          finishedAt: showFinishedAt ? (finishedAt || null) : null,
+          startedAt: showStartedAt ? startedAt || null : null,
+          finishedAt: showFinishedAt ? finishedAt || null : null,
         };
         await updateMyBook(props.userBook.id, payload);
         props.onUpdated(props.userBook.id, payload);
+        toast.success(`"${title}" updated`);
       } else {
         const payload: CreateUserBookInput = {
           bookId: book.id,
           status,
           rating: showRating ? rating : null,
           review: review.trim() || null,
-          startedAt: showStartedAt ? (startedAt || null) : null,
-          finishedAt: showFinishedAt ? (finishedAt || null) : null,
+          startedAt: showStartedAt ? startedAt || null : null,
+          finishedAt: showFinishedAt ? finishedAt || null : null,
         };
         await saveBookToMyShelf(payload);
         props.onSaved(book.id);
+        toast.success(`"${title}" added to your shelf`);
       }
       onClose();
     } catch (err) {
@@ -128,6 +146,7 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
     try {
       await deleteMyBook(props.userBook.id);
       props.onDeleted(props.userBook.id);
+      toast.success(`"${title}" removed from your shelf`);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete book");
@@ -156,20 +175,33 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
             </h2>
           </div>
 
-          <Button type="button" variant="ghost" size="icon-sm" onClick={onClose}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={onClose}
+          >
             <X />
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-1 flex-col gap-6 overflow-y-auto px-6 py-6">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-1 flex-col gap-6 overflow-y-auto px-6 py-6"
+        >
           <div className="flex flex-col gap-2">
-            <label htmlFor="status" className="text-sm font-medium text-[#1a2e1f]">
+            <label
+              htmlFor="status"
+              className="text-sm font-medium text-[#1a2e1f]"
+            >
               Reading status
             </label>
             <select
               id="status"
               value={status}
-              onChange={(event) => setStatus(event.target.value as UserBookStatus)}
+              onChange={(event) =>
+                setStatus(event.target.value as UserBookStatus)
+              }
               className="h-11 rounded-md border border-[#c8d9c4] bg-white px-3 text-sm text-[#1a2e1f] outline-none transition focus:border-[#3d6449]"
             >
               {STATUS_OPTIONS.map((option) => (
@@ -182,7 +214,10 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
 
           {showStartedAt ? (
             <div className="flex flex-col gap-2">
-              <label htmlFor="startedAt" className="text-sm font-medium text-[#1a2e1f]">
+              <label
+                htmlFor="startedAt"
+                className="text-sm font-medium text-[#1a2e1f]"
+              >
                 Date started
               </label>
               <input
@@ -197,7 +232,10 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
 
           {showFinishedAt ? (
             <div className="flex flex-col gap-2">
-              <label htmlFor="finishedAt" className="text-sm font-medium text-[#1a2e1f]">
+              <label
+                htmlFor="finishedAt"
+                className="text-sm font-medium text-[#1a2e1f]"
+              >
                 Date finished
               </label>
               <input
@@ -213,7 +251,9 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
           {showRating ? (
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-[#1a2e1f]">Rating</label>
+                <label className="text-sm font-medium text-[#1a2e1f]">
+                  Rating
+                </label>
                 {rating ? (
                   <button
                     type="button"
@@ -242,7 +282,9 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
                       }`}
                       aria-label={`Set rating to ${value} stars`}
                     >
-                      <Star className={`size-4 ${isActive ? "fill-current" : ""}`} />
+                      <Star
+                        className={`size-4 ${isActive ? "fill-current" : ""}`}
+                      />
                     </button>
                   );
                 })}
@@ -252,7 +294,10 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
 
           {showReview ? (
             <div className="flex flex-col gap-2">
-              <label htmlFor="review" className="text-sm font-medium text-[#1a2e1f]">
+              <label
+                htmlFor="review"
+                className="text-sm font-medium text-[#1a2e1f]"
+              >
                 Review
               </label>
               <textarea
@@ -299,7 +344,11 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
                 disabled={isSaving || isDeleting}
               >
                 {props.mode === "edit" ? <Save /> : <Plus />}
-                {isSaving ? "Saving..." : props.mode === "edit" ? "Save changes" : "Save book"}
+                {isSaving
+                  ? "Saving..."
+                  : props.mode === "edit"
+                    ? "Save changes"
+                    : "Save book"}
               </Button>
             </div>
           </div>
