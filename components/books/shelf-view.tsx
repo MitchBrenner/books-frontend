@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import CountUp from "react-countup";
+
 import { BookCard } from "@/components/books/book-card";
 import { SaveBookDrawer } from "@/components/books/save-book-drawer";
 import { getMyBooks } from "@/lib/api/user-books";
@@ -38,19 +40,39 @@ export function ShelfView() {
     setSavedBooks((prev) => prev.filter((b) => b.id !== userBookId));
   }
 
+  const booksRead = savedBooks.filter((b) => b.status === "read").length;
   const totalPagesRead = savedBooks
     .filter((b) => b.status === "read" && b.book?.pages)
     .reduce((sum, b) => sum + (b.book?.pages ?? 0), 0);
+  const currentlyReading = savedBooks.filter((b) => b.status === "reading").length;
+
+  const metrics = [
+    { label: "Books read", value: booksRead, separator: "" },
+    { label: "Pages read", value: totalPagesRead, separator: "," },
+    { label: "Reading now", value: currentlyReading, separator: "" },
+    { label: "Total saved", value: savedBooks.length, separator: "" },
+  ];
 
   return (
-    <section className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-black">Your shelf</h1>
-        <div className="flex flex-col items-end gap-0.5 text-sm text-gray-400">
-          <span>{savedBooks.length} books</span>
-          {totalPagesRead > 0 ? (
-            <span>{totalPagesRead.toLocaleString()} pages read</span>
-          ) : null}
+    <section className="flex flex-col gap-8">
+      <div>
+        <h1 className="mb-6 text-2xl font-bold text-black">Your shelf</h1>
+
+        <div className="grid grid-cols-4 gap-3">
+          {metrics.map((metric) => (
+            <div
+              key={metric.label}
+              className="flex flex-col gap-1 rounded-xl border border-gray-100 bg-white px-4 py-4"
+            >
+              <CountUp
+                end={metric.value}
+                duration={1.2}
+                separator={metric.separator}
+                className="text-2xl font-bold text-black"
+              />
+              <span className="text-xs text-gray-400">{metric.label}</span>
+            </div>
+          ))}
         </div>
       </div>
 
