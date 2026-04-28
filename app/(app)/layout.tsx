@@ -3,6 +3,7 @@
 import { AppNav } from "@/components/navigation/app-nav";
 import { useAuth } from "@/lib/auth/use-auth";
 import Login from "@/app/login/page";
+import { Toaster } from "react-hot-toast";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
@@ -11,9 +12,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   if (!user) return <Login />;
 
   return (
-    <div className="min-h-screen bg-[#faf8f4]">
+    <div className="flex min-h-screen bg-white">
+      <Toaster position="top-right" />
       <AppNav />
-      {children}
+      <div className="flex-1 pl-60">{children}</div>
     </div>
   );
 }

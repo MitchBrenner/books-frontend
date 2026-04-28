@@ -1,9 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export function CreateUserForm() {
   const router = useRouter();
@@ -42,9 +42,7 @@ export function CreateUserForm() {
         },
       });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       setEmail("");
       setPassword("");
@@ -61,7 +59,7 @@ export function CreateUserForm() {
         "Account created. Check your email to confirm your account before signing in.",
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create user");
+      setError(err instanceof Error ? err.message : "Failed to create account");
     } finally {
       setIsSubmitting(false);
     }
@@ -71,7 +69,7 @@ export function CreateUserForm() {
     <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4">
       <div className="flex gap-3">
         <div className="flex flex-1 flex-col gap-1.5">
-          <label htmlFor="create-first-name" className="text-sm font-medium text-[#1a2e1f]">
+          <label htmlFor="create-first-name" className="text-sm font-medium text-gray-900">
             First name
           </label>
           <Input
@@ -79,11 +77,11 @@ export function CreateUserForm() {
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             placeholder="Jane"
-            className="h-11 px-4 rounded-md border-[#c8d9c4] bg-white focus-visible:ring-[#3d6449]"
+            className="h-10 rounded-lg border-gray-200 bg-white px-4 focus-visible:border-black focus-visible:ring-0"
           />
         </div>
         <div className="flex flex-1 flex-col gap-1.5">
-          <label htmlFor="create-last-name" className="text-sm font-medium text-[#1a2e1f]">
+          <label htmlFor="create-last-name" className="text-sm font-medium text-gray-900">
             Last name
           </label>
           <Input
@@ -91,13 +89,13 @@ export function CreateUserForm() {
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             placeholder="Doe"
-            className="h-11 px-4 rounded-md border-[#c8d9c4] bg-white focus-visible:ring-[#3d6449]"
+            className="h-10 rounded-lg border-gray-200 bg-white px-4 focus-visible:border-black focus-visible:ring-0"
           />
         </div>
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="create-username" className="text-sm font-medium text-[#1a2e1f]">
+        <label htmlFor="create-username" className="text-sm font-medium text-gray-900">
           Username
         </label>
         <Input
@@ -105,12 +103,12 @@ export function CreateUserForm() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="janereads"
-          className="h-11 px-4 rounded-md border-[#c8d9c4] bg-white focus-visible:ring-[#3d6449]"
+          className="h-10 rounded-lg border-gray-200 bg-white px-4 focus-visible:border-black focus-visible:ring-0"
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="create-email" className="text-sm font-medium text-[#1a2e1f]">
+        <label htmlFor="create-email" className="text-sm font-medium text-gray-900">
           Email
         </label>
         <Input
@@ -119,12 +117,12 @@ export function CreateUserForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
-          className="h-11 px-4 rounded-md border-[#c8d9c4] bg-white focus-visible:ring-[#3d6449]"
+          className="h-10 rounded-lg border-gray-200 bg-white px-4 focus-visible:border-black focus-visible:ring-0"
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="create-password" className="text-sm font-medium text-[#1a2e1f]">
+        <label htmlFor="create-password" className="text-sm font-medium text-gray-900">
           Password
         </label>
         <Input
@@ -133,21 +131,21 @@ export function CreateUserForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
-          className="h-11 px-4 rounded-md border-[#c8d9c4] bg-white focus-visible:ring-[#3d6449]"
+          className="h-10 rounded-lg border-gray-200 bg-white px-4 focus-visible:border-black focus-visible:ring-0"
         />
       </div>
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="mt-2 w-full rounded-md bg-[#2d4a35] py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#3d6449] disabled:opacity-60"
+        className="mt-2 w-full cursor-pointer rounded-lg bg-black py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
       >
         {isSubmitting ? "Creating..." : "Create account"}
       </button>
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? <p className="text-sm text-red-500">{error}</p> : null}
       {successMessage ? (
-        <p className="text-sm text-[#4a7c59]">{successMessage}</p>
+        <p className="text-sm text-gray-500">{successMessage}</p>
       ) : null}
     </form>
   );

@@ -4,18 +4,16 @@ import { useAuth } from "@/lib/auth/use-auth";
 
 export default function Home() {
   const { user } = useAuth();
+  const name = user?.user_metadata.username ?? user?.email;
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-10">
-      <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium uppercase tracking-[0.3em] text-[#4a7c59]">Feed</p>
-        <h1 className="text-4xl font-semibold tracking-tight text-[#1a2e1f]">
-          Welcome back, {user?.user_metadata.username ?? user?.email}
-        </h1>
-        <p className="mt-1 max-w-2xl text-base text-[#6b7f6e]">
-          Follow your friends to see what they are reading.
-        </p>
-      </div>
+    <main className="mx-auto max-w-3xl px-8 py-12">
+      <h1 className="text-2xl font-bold text-black">
+        Welcome back{name ? `, ${name}` : ""}
+      </h1>
+      <p className="mt-1.5 text-sm text-gray-500">
+        Follow your friends to see what they&apos;re reading.
+      </p>
     </main>
   );
 }

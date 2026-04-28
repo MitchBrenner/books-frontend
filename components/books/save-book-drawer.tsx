@@ -2,9 +2,21 @@
 
 import { type SyntheticEvent, useEffect, useMemo, useState } from "react";
 import { Plus, Save, Star, Trash2, X } from "lucide-react";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
-import { deleteMyBook, saveBookToMyShelf, updateMyBook } from "@/lib/api/user-books";
-import type { Book, CreateUserBookInput, UpdateUserBookInput, UserBook, UserBookStatus } from "@/types/api";
+import {
+  deleteMyBook,
+  saveBookToMyShelf,
+  updateMyBook,
+} from "@/lib/api/user-books";
+import type {
+  Book,
+  CreateUserBookInput,
+  UpdateUserBookInput,
+  UserBook,
+  UserBookStatus,
+} from "@/types/api";
 import { Button } from "@/components/ui/button";
 
 type SaveBookDrawerProps =
@@ -40,11 +52,16 @@ function toDateInputValue(value: string | null | undefined): string {
 export function SaveBookDrawer(props: SaveBookDrawerProps) {
   const { book, isOpen, onClose } = props;
 
-  const initialStatus = props.mode === "edit" ? props.userBook.status : "want_to_read";
-  const initialRating = props.mode === "edit" ? (props.userBook.rating ?? null) : null;
-  const initialReview = props.mode === "edit" ? (props.userBook.review ?? "") : "";
-  const initialStartedAt = props.mode === "edit" ? toDateInputValue(props.userBook.startedAt) : "";
-  const initialFinishedAt = props.mode === "edit" ? toDateInputValue(props.userBook.finishedAt) : "";
+  const initialStatus =
+    props.mode === "edit" ? props.userBook.status : "want_to_read";
+  const initialRating =
+    props.mode === "edit" ? (props.userBook.rating ?? null) : null;
+  const initialReview =
+    props.mode === "edit" ? (props.userBook.review ?? "") : "";
+  const initialStartedAt =
+    props.mode === "edit" ? toDateInputValue(props.userBook.startedAt) : "";
+  const initialFinishedAt =
+    props.mode === "edit" ? toDateInputValue(props.userBook.finishedAt) : "";
 
   const [status, setStatus] = useState<UserBookStatus>(initialStatus);
   const [rating, setRating] = useState<number | null>(initialRating);
@@ -77,7 +94,7 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
       setFinishedAt("");
     }
     setError(null);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, book?.id]);
 
   const title = useMemo(() => book?.title ?? "Book", [book?.title]);
@@ -95,22 +112,24 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
           status,
           rating: showRating ? rating : null,
           review: review.trim() || null,
-          startedAt: showStartedAt ? (startedAt || null) : null,
-          finishedAt: showFinishedAt ? (finishedAt || null) : null,
+          startedAt: showStartedAt ? startedAt || null : null,
+          finishedAt: showFinishedAt ? finishedAt || null : null,
         };
         await updateMyBook(props.userBook.id, payload);
         props.onUpdated(props.userBook.id, payload);
+        toast.success(`"${title}" updated`);
       } else {
         const payload: CreateUserBookInput = {
           bookId: book.id,
           status,
           rating: showRating ? rating : null,
           review: review.trim() || null,
-          startedAt: showStartedAt ? (startedAt || null) : null,
-          finishedAt: showFinishedAt ? (finishedAt || null) : null,
+          startedAt: showStartedAt ? startedAt || null : null,
+          finishedAt: showFinishedAt ? finishedAt || null : null,
         };
         await saveBookToMyShelf(payload);
         props.onSaved(book.id);
+        toast.success(`"${title}" added to your shelf`);
       }
       onClose();
     } catch (err) {
@@ -128,6 +147,7 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
     try {
       await deleteMyBook(props.userBook.id);
       props.onDeleted(props.userBook.id);
+      toast.success(`"${title}" removed from your shelf`);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete book");
@@ -137,40 +157,62 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/25">
+    <motion.div
+      className="fixed inset-0 z-50 flex justify-end bg-black/40"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
       <button
         type="button"
-        aria-label="Close save drawer"
+        aria-label="Close drawer"
         className="flex-1 cursor-default"
         onClick={onClose}
       />
 
-      <aside className="flex h-full w-full max-w-md flex-col border-l border-[#c8d9c4] bg-[#faf8f4] shadow-2xl">
-        <div className="flex items-center justify-between border-b border-[#d7e3d4] px-6 py-5">
-          <div className="flex min-w-0 flex-col gap-1">
-            <p className="text-xs font-medium uppercase tracking-[0.24em] text-[#4a7c59]">
+      <motion.aside
+        className="flex h-full w-full max-w-md flex-col border-l border-gray-100 bg-white shadow-xl"
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", damping: 30, stiffness: 300 }}
+      >
+        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
+          <div className="flex min-w-0 flex-col gap-0.5">
+            <p className="text-xs font-medium uppercase tracking-widest text-gray-400">
               {props.mode === "edit" ? "Edit book" : "Save to shelf"}
             </p>
-            <h2 className="truncate text-xl font-semibold text-[#1a2e1f]">
+            <h2 className="truncate text-lg font-semibold text-black">
               {title}
             </h2>
           </div>
 
-          <Button type="button" variant="ghost" size="icon-sm" onClick={onClose}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={onClose}
+          >
             <X />
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-1 flex-col gap-6 overflow-y-auto px-6 py-6">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-6"
+        >
           <div className="flex flex-col gap-2">
-            <label htmlFor="status" className="text-sm font-medium text-[#1a2e1f]">
+            <label htmlFor="status" className="text-sm font-medium text-gray-900">
               Reading status
             </label>
             <select
               id="status"
               value={status}
-              onChange={(event) => setStatus(event.target.value as UserBookStatus)}
-              className="h-11 rounded-md border border-[#c8d9c4] bg-white px-3 text-sm text-[#1a2e1f] outline-none transition focus:border-[#3d6449]"
+              onChange={(event) =>
+                setStatus(event.target.value as UserBookStatus)
+              }
+              className="h-10 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-black"
             >
               {STATUS_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -182,7 +224,7 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
 
           {showStartedAt ? (
             <div className="flex flex-col gap-2">
-              <label htmlFor="startedAt" className="text-sm font-medium text-[#1a2e1f]">
+              <label htmlFor="startedAt" className="text-sm font-medium text-gray-900">
                 Date started
               </label>
               <input
@@ -190,14 +232,14 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
                 id="startedAt"
                 value={startedAt}
                 onChange={(event) => setStartedAt(event.target.value)}
-                className="h-11 rounded-md border border-[#c8d9c4] bg-white px-3 text-sm text-[#1a2e1f] outline-none transition focus:border-[#3d6449]"
+                className="h-10 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-black"
               />
             </div>
           ) : null}
 
           {showFinishedAt ? (
             <div className="flex flex-col gap-2">
-              <label htmlFor="finishedAt" className="text-sm font-medium text-[#1a2e1f]">
+              <label htmlFor="finishedAt" className="text-sm font-medium text-gray-900">
                 Date finished
               </label>
               <input
@@ -205,7 +247,7 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
                 id="finishedAt"
                 value={finishedAt}
                 onChange={(event) => setFinishedAt(event.target.value)}
-                className="h-11 rounded-md border border-[#c8d9c4] bg-white px-3 text-sm text-[#1a2e1f] outline-none transition focus:border-[#3d6449]"
+                className="h-10 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-black"
               />
             </div>
           ) : null}
@@ -213,11 +255,11 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
           {showRating ? (
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-[#1a2e1f]">Rating</label>
+                <label className="text-sm font-medium text-gray-900">Rating</label>
                 {rating ? (
                   <button
                     type="button"
-                    className="text-xs font-medium text-[#6b7f6e] hover:text-[#1a2e1f]"
+                    className="cursor-pointer text-xs text-gray-400 hover:text-black"
                     onClick={() => setRating(null)}
                   >
                     Clear
@@ -235,10 +277,10 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
                       key={value}
                       type="button"
                       onClick={() => setRating(value)}
-                      className={`flex size-10 items-center justify-center rounded-md border transition ${
+                      className={`flex size-10 cursor-pointer items-center justify-center rounded-lg border transition ${
                         isActive
-                          ? "border-[#3d6449] bg-[#e8f0e8] text-[#2d4a35]"
-                          : "border-[#c8d9c4] bg-white text-[#9eb59a] hover:border-[#aac2a7] hover:text-[#6b7f6e]"
+                          ? "border-black bg-gray-100 text-black"
+                          : "border-gray-200 bg-white text-gray-300 hover:border-gray-400 hover:text-gray-500"
                       }`}
                       aria-label={`Set rating to ${value} stars`}
                     >
@@ -252,7 +294,7 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
 
           {showReview ? (
             <div className="flex flex-col gap-2">
-              <label htmlFor="review" className="text-sm font-medium text-[#1a2e1f]">
+              <label htmlFor="review" className="text-sm font-medium text-gray-900">
                 Review
               </label>
               <textarea
@@ -260,7 +302,7 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
                 value={review}
                 onChange={(event) => setReview(event.target.value)}
                 placeholder="What did you think?"
-                className="min-h-28 rounded-md border border-[#c8d9c4] bg-white px-3 py-3 text-sm text-[#1a2e1f] outline-none transition focus:border-[#3d6449]"
+                className="min-h-28 rounded-lg border border-gray-200 bg-white px-3 py-3 text-sm text-gray-900 outline-none transition focus:border-black"
               />
             </div>
           ) : null}
@@ -268,17 +310,17 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
           <div className="flex-1" />
 
           {error ? (
-            <p className="rounded-md border border-[#e0c2c2] bg-[#fff3f3] px-3 py-2 text-sm text-[#9b4b4b]">
+            <p className="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm text-red-500">
               {error}
             </p>
           ) : null}
 
-          <div className="flex items-center justify-between gap-3 border-t border-[#d7e3d4] pt-5">
+          <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-5">
             {props.mode === "edit" ? (
               <Button
                 type="button"
                 variant="ghost"
-                className="text-[#9b4b4b] hover:bg-[#fff3f3] hover:text-[#9b4b4b]"
+                className="text-red-500 hover:bg-red-50 hover:text-red-600"
                 disabled={isDeleting || isSaving}
                 onClick={handleDelete}
               >
@@ -289,22 +331,26 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
               <div />
             )}
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="bg-[#2d4a35] text-white hover:bg-[#3d6449]"
+                className="bg-black text-white hover:bg-gray-800"
                 disabled={isSaving || isDeleting}
               >
                 {props.mode === "edit" ? <Save /> : <Plus />}
-                {isSaving ? "Saving..." : props.mode === "edit" ? "Save changes" : "Save book"}
+                {isSaving
+                  ? "Saving..."
+                  : props.mode === "edit"
+                    ? "Save changes"
+                    : "Save book"}
               </Button>
             </div>
           </div>
         </form>
-      </aside>
-    </div>
+      </motion.aside>
+    </motion.div>
   );
 }

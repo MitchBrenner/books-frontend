@@ -1,13 +1,15 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
+import { Plus } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
+
 import { BookCard } from "@/components/books/book-card";
 import { SaveBookDrawer } from "@/components/books/save-book-drawer";
 import { Input } from "@/components/ui/input";
 import { getBooksByQuery } from "@/lib/api/books";
 import { getMyBooks } from "@/lib/api/user-books";
 import type { Book, UserBook } from "@/types/api";
-import { Plus } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
@@ -65,40 +67,28 @@ export default function SearchPage() {
 
   return (
     <>
-      <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-10">
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium uppercase tracking-[0.3em] text-[#4a7c59]">
-            Search
-          </p>
-          <h1 className="text-4xl font-semibold tracking-tight text-[#1a2e1f]">
-            Find your next book
-          </h1>
-          <p className="mt-1 max-w-2xl text-base text-[#6b7f6e]">
-            Search the catalog and start building your shelf.
-          </p>
-        </div>
+      <main className="mx-auto max-w-3xl px-8 py-12">
+        <h1 className="mb-6 text-2xl font-bold text-black">Search</h1>
 
-        <form onSubmit={handleSearch} className="flex w-full max-w-2xl gap-3">
+        <form onSubmit={handleSearch} className="flex gap-2">
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by title or author"
-            className="h-11 rounded-md border-[#c8d9c4] bg-white px-4 focus-visible:ring-[#3d6449]"
+            placeholder="Title or author..."
+            className="h-10 flex-1 border-gray-200 bg-white text-sm focus-visible:border-black focus-visible:ring-0"
           />
           <button
             type="submit"
-            className="rounded-md bg-[#2d4a35] px-6 text-sm font-medium text-white transition-colors hover:bg-[#3d6449]"
+            className="cursor-pointer rounded-md bg-black px-5 text-sm font-medium text-white transition-colors hover:bg-gray-800"
           >
             Search
           </button>
         </form>
 
-        {error ? (
-          <p className="text-sm text-[#9b4b4b]">{error}</p>
-        ) : null}
+        {error ? <p className="mt-4 text-sm text-red-500">{error}</p> : null}
 
-        {books.length > 0 && (
-          <div className="grid gap-3">
+        {books.length > 0 ? (
+          <div className="mt-6 flex flex-col gap-2">
             {books.map((book) => {
               const isSaved = savedBookIds.has(book.id);
 
@@ -108,14 +98,14 @@ export default function SearchPage() {
                   book={book}
                   action={
                     isSaved ? (
-                      <span className="rounded-full bg-[#e8f0e8] px-3 py-1 text-xs font-medium text-[#2d4a35]">
+                      <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-500">
                         Saved
                       </span>
                     ) : (
                       <button
                         type="button"
                         onClick={() => setSelectedBook(book)}
-                        className="flex size-8 items-center justify-center rounded-full border border-[#c8d9c4] text-[#2d4a35] transition-colors hover:border-[#2d4a35] hover:bg-[#f3f7f2]"
+                        className="flex size-8 cursor-pointer items-center justify-center rounded-full border border-gray-200 text-black transition-colors hover:border-black hover:bg-gray-50"
                         aria-label={`Save ${book.title}`}
                       >
                         <Plus className="size-4" />
@@ -126,27 +116,29 @@ export default function SearchPage() {
               );
             })}
           </div>
-        )}
+        ) : null}
 
-        {hasSearched && books.length === 0 && (
-          <p className="text-sm text-[#6b7f6e]">No matches found for that search.</p>
-        )}
+        {hasSearched && books.length === 0 ? (
+          <p className="mt-6 text-sm text-gray-500">No results found.</p>
+        ) : null}
       </main>
 
-      {selectedBook ? (
-        <SaveBookDrawer
-          mode="save"
-          book={selectedBook}
-          isOpen={true}
-          onClose={() => setSelectedBook(null)}
-          onSaved={(bookId) => {
-            const savedBook = books.find((book) => book.id === bookId);
-            if (savedBook) {
-              handleBookSaved(savedBook);
-            }
-          }}
-        />
-      ) : null}
+      <AnimatePresence>
+        {selectedBook ? (
+          <SaveBookDrawer
+            mode="save"
+            book={selectedBook}
+            isOpen={true}
+            onClose={() => setSelectedBook(null)}
+            onSaved={(bookId) => {
+              const savedBook = books.find((book) => book.id === bookId);
+              if (savedBook) {
+                handleBookSaved(savedBook);
+              }
+            }}
+          />
+        ) : null}
+      </AnimatePresence>
     </>
   );
 }
