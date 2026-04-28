@@ -2,6 +2,7 @@
 
 import { type SyntheticEvent, useEffect, useMemo, useState } from "react";
 import { Plus, Save, Star, Trash2, X } from "lucide-react";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
 import {
@@ -156,7 +157,13 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/40">
+    <motion.div
+      className="fixed inset-0 z-50 flex justify-end bg-black/40"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
       <button
         type="button"
         aria-label="Close drawer"
@@ -164,7 +171,13 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
         onClick={onClose}
       />
 
-      <aside className="flex h-full w-full max-w-md flex-col border-l border-gray-100 bg-white shadow-xl">
+      <motion.aside
+        className="flex h-full w-full max-w-md flex-col border-l border-gray-100 bg-white shadow-xl"
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", damping: 30, stiffness: 300 }}
+      >
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
           <div className="flex min-w-0 flex-col gap-0.5">
             <p className="text-xs font-medium uppercase tracking-widest text-gray-400">
@@ -337,7 +350,7 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
             </div>
           </div>
         </form>
-      </aside>
-    </div>
+      </motion.aside>
+    </motion.div>
   );
 }

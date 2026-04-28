@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
 
 import { BookCard } from "@/components/books/book-card";
@@ -117,17 +118,19 @@ export function ShelfView() {
         </div>
       ) : null}
 
-      {editingBook?.book ? (
-        <SaveBookDrawer
-          mode="edit"
-          book={editingBook.book}
-          userBook={editingBook}
-          isOpen={true}
-          onClose={() => setEditingBook(null)}
-          onUpdated={handleUpdated}
-          onDeleted={handleDeleted}
-        />
-      ) : null}
+      <AnimatePresence>
+        {editingBook?.book ? (
+          <SaveBookDrawer
+            mode="edit"
+            book={editingBook.book}
+            userBook={editingBook}
+            isOpen={true}
+            onClose={() => setEditingBook(null)}
+            onUpdated={handleUpdated}
+            onDeleted={handleDeleted}
+          />
+        ) : null}
+      </AnimatePresence>
     </section>
   );
 }

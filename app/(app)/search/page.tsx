@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 
 import { BookCard } from "@/components/books/book-card";
 import { SaveBookDrawer } from "@/components/books/save-book-drawer";
@@ -122,20 +123,22 @@ export default function SearchPage() {
         ) : null}
       </main>
 
-      {selectedBook ? (
-        <SaveBookDrawer
-          mode="save"
-          book={selectedBook}
-          isOpen={true}
-          onClose={() => setSelectedBook(null)}
-          onSaved={(bookId) => {
-            const savedBook = books.find((book) => book.id === bookId);
-            if (savedBook) {
-              handleBookSaved(savedBook);
-            }
-          }}
-        />
-      ) : null}
+      <AnimatePresence>
+        {selectedBook ? (
+          <SaveBookDrawer
+            mode="save"
+            book={selectedBook}
+            isOpen={true}
+            onClose={() => setSelectedBook(null)}
+            onSaved={(bookId) => {
+              const savedBook = books.find((book) => book.id === bookId);
+              if (savedBook) {
+                handleBookSaved(savedBook);
+              }
+            }}
+          />
+        ) : null}
+      </AnimatePresence>
     </>
   );
 }
