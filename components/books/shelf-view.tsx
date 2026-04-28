@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
 
+import { Star } from "lucide-react";
+
 import { BookCard } from "@/components/books/book-card";
 import { SaveBookDrawer } from "@/components/books/save-book-drawer";
 import { getMyBooks } from "@/lib/api/user-books";
@@ -101,15 +103,18 @@ export function ShelfView() {
               >
                 <BookCard
                   book={savedBook.book}
+                  action={
+                    savedBook.rating ? (
+                      <div className="flex items-center gap-1 text-sm font-medium text-gray-700">
+                        <span>{savedBook.rating}</span>
+                        <Star className="size-3.5 fill-current text-gray-700" />
+                      </div>
+                    ) : null
+                  }
                   subtitle={
-                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-gray-400">
-                      <span className="capitalize">
-                        {savedBook.status.replaceAll("_", " ")}
-                      </span>
-                      {savedBook.rating ? (
-                        <span>· {savedBook.rating} stars</span>
-                      ) : null}
-                    </div>
+                    <span className="text-xs capitalize text-gray-400">
+                      {savedBook.status.replaceAll("_", " ")}
+                    </span>
                   }
                 />
               </button>

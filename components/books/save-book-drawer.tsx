@@ -68,6 +68,7 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
   const [review, setReview] = useState(initialReview);
   const [startedAt, setStartedAt] = useState(initialStartedAt);
   const [finishedAt, setFinishedAt] = useState(initialFinishedAt);
+  const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -267,25 +268,43 @@ export function SaveBookDrawer(props: SaveBookDrawerProps) {
                 ) : null}
               </div>
 
-              <div className="flex gap-2">
-                {Array.from({ length: 5 }, (_, index) => {
-                  const value = index + 1;
-                  const isActive = value <= (rating ?? 0);
+              <div className="flex gap-1" onMouseLeave={() => setHoverRating(null)}>
+                {Array.from({ length: 5 }, (_, i) => {
+                  const fullValue = i + 1;
+                  const halfValue = i + 0.5;
+                  const display = hoverRating ?? rating ?? 0;
+                  const isFull = display >= fullValue;
+                  const isHalf = !isFull && display >= halfValue;
 
                   return (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => setRating(value)}
-                      className={`flex size-10 cursor-pointer items-center justify-center rounded-lg border transition ${
-                        isActive
-                          ? "border-black bg-gray-100 text-black"
-                          : "border-gray-200 bg-white text-gray-300 hover:border-gray-400 hover:text-gray-500"
-                      }`}
-                      aria-label={`Set rating to ${value} stars`}
-                    >
-                      <Star className={`size-4 ${isActive ? "fill-current" : ""}`} />
-                    </button>
+                    <div key={fullValue} className="relative size-8">
+                      {isFull ? (
+                        <Star className="size-8 fill-current text-black" />
+                      ) : isHalf ? (
+                        <span className="relative block size-8">
+                          <Star className="absolute inset-0 size-8 text-gray-200" />
+                          <span className="absolute inset-0 w-1/2 overflow-hidden">
+                            <Star className="size-8 fill-current text-black" />
+                          </span>
+                        </span>
+                      ) : (
+                        <Star className="size-8 text-gray-200" />
+                      )}
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 left-0 w-1/2 cursor-pointer"
+                        aria-label={`Set rating to ${halfValue} stars`}
+                        onMouseEnter={() => setHoverRating(halfValue)}
+                        onClick={() => setRating(halfValue)}
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 w-1/2 cursor-pointer"
+                        aria-label={`Set rating to ${fullValue} stars`}
+                        onMouseEnter={() => setHoverRating(fullValue)}
+                        onClick={() => setRating(fullValue)}
+                      />
+                    </div>
                   );
                 })}
               </div>
