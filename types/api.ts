@@ -18,7 +18,7 @@ export type Book = {
   title: string;
   author: string;
   year: number | null;
-  coverId: number | null;
+  coverUrl: string | null;
   pages: number | null;
 };
 
