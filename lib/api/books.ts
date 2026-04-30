@@ -5,3 +5,7 @@ export async function getBooksByQuery(query: string) {
   const params = new URLSearchParams({ q: query });
   return apiFetch<Book[]>(`/books/search?${params.toString()}`);
 }
+
+export async function getBookById(id: string) {
+  return apiFetch<Book>(`/books/${id}`);
+}
