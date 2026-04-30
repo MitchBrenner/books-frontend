@@ -8,13 +8,8 @@ type BookCardProps = {
   subtitle?: ReactNode;
 };
 
-function getCoverUrl(coverId: number | null, size: "S" | "M" | "L" = "M") {
-  if (!coverId) return null;
-  return `https://covers.openlibrary.org/b/id/${coverId}-${size}.jpg?default=false`;
-}
-
 export function BookCard({ book, action, subtitle }: BookCardProps) {
-  const coverUrl = getCoverUrl(book.coverId);
+  const coverUrl = book.coverUrl;
 
   return (
     <article className="flex overflow-hidden rounded-xl border border-gray-100 bg-white">
