@@ -9,6 +9,7 @@ import { SaveBookDrawer } from "@/components/books/save-book-drawer";
 import { Input } from "@/components/ui/input";
 import { getBooksByQuery } from "@/lib/api/books";
 import { getMyBooks } from "@/lib/api/user-books";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Book, UserBook } from "@/types/api";
 
 export default function SearchPage() {
@@ -17,6 +18,7 @@ export default function SearchPage() {
   const [savedBooks, setSavedBooks] = useState<UserBook[]>([]);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -40,6 +42,8 @@ export default function SearchPage() {
   async function handleSearch(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+    setIsSearching(true);
+    setBooks([]);
 
     try {
       const data: Book[] = await getBooksByQuery(query);
@@ -47,6 +51,8 @@ export default function SearchPage() {
       setHasSearched(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to search books");
+    } finally {
+      setIsSearching(false);
     }
   }
 
@@ -87,7 +93,22 @@ export default function SearchPage() {
 
         {error ? <p className="mt-4 text-sm text-red-500">{error}</p> : null}
 
-        {books.length > 0 ? (
+        {isSearching ? (
+          <div className="mt-6 flex flex-col gap-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex h-32 overflow-hidden rounded-xl border border-gray-100 bg-white">
+                <Skeleton className="w-20 shrink-0 self-stretch rounded-none" />
+                <div className="flex flex-1 flex-col gap-2 px-4 py-3.5">
+                  <Skeleton className="h-4 w-2/3" />
+                  <Skeleton className="h-3 w-1/3" />
+                  <Skeleton className="h-3 w-1/4" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {!isSearching && books.length > 0 ? (
           <div className="mt-6 flex flex-col gap-2">
             {books.map((book) => {
               const isSaved = savedBookIds.has(book.id);
@@ -119,7 +140,7 @@ export default function SearchPage() {
           </div>
         ) : null}
 
-        {hasSearched && books.length === 0 ? (
+        {!isSearching && hasSearched && books.length === 0 && !error ? (
           <p className="mt-6 text-sm text-gray-500">No results found.</p>
         ) : null}
       </main>

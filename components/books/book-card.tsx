@@ -40,7 +40,7 @@ export function BookCard({ book, action, subtitle, href }: BookCardProps) {
   );
 
   return (
-    <article className="flex overflow-hidden rounded-xl border border-gray-100 bg-white">
+    <article className="flex h-32 overflow-hidden rounded-xl border border-gray-100 bg-white">
       {href ? (
         <Link href={href} className="flex min-w-0 flex-1">
           {cover}

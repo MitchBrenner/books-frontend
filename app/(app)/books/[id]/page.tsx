@@ -20,6 +20,7 @@ import type {
   UserBookStatus,
 } from "@/types/api";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const STATUS_OPTIONS: Array<{ value: UserBookStatus; label: string }> = [
   { value: "want_to_read", label: "Want to read" },
@@ -106,8 +107,8 @@ export default function BookPage() {
           startedAt: showStartedAt ? startedAt || null : null,
           finishedAt: showFinishedAt ? finishedAt || null : null,
         };
-        await saveBookToMyShelf(payload);
-        setUserBook({ id: "", userId: "", ...payload });
+        const { id: userBookId } = await saveBookToMyShelf(payload);
+        setUserBook({ id: userBookId, userId: "", ...payload });
         toast.success(`"${book.title}" added to your shelf`);
       }
     } catch (err) {
@@ -137,22 +138,22 @@ export default function BookPage() {
     }
   }
 
-  const largeCoverUrl = book?.coverUrl?.replace("zoom=1", "zoom=3") ?? null;
+  const largeCoverUrl = book?.coverUrl ?? null;
 
   if (isLoading) {
     return (
       <main className="mx-auto max-w-5xl px-6 py-8">
-        <div className="mb-8 h-5 w-16 animate-pulse rounded bg-gray-100" />
+        <Skeleton className="mb-8 h-5 w-16" />
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_360px]">
           <div className="flex gap-6">
-            <div className="h-52 w-32 animate-pulse rounded-lg bg-gray-100" />
+            <Skeleton className="h-52 w-32 shrink-0" />
             <div className="flex flex-1 flex-col gap-3 py-1">
-              <div className="h-5 w-3/4 animate-pulse rounded bg-gray-100" />
-              <div className="h-4 w-1/2 animate-pulse rounded bg-gray-100" />
-              <div className="h-4 w-1/4 animate-pulse rounded bg-gray-100" />
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-4 w-1/4" />
             </div>
           </div>
-          <div className="h-64 animate-pulse rounded-xl bg-gray-100" />
+          <Skeleton className="h-64 rounded-xl" />
         </div>
       </main>
     );

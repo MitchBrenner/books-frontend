@@ -6,7 +6,7 @@ export async function getMyBooks() {
 }
 
 export async function saveBookToMyShelf(input: CreateUserBookInput) {
-  return apiFetchWithAuth<{ message: string }>("/me/books", {
+  return apiFetchWithAuth<{ id: string; message: string }>("/me/books", {
     method: "POST",
     body: JSON.stringify(input),
   });
