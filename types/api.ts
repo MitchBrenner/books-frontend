@@ -16,10 +16,14 @@ export type CreateUserInput = {
 export type Book = {
   id: string;
   title: string;
+  subtitle?: string | null;
   author: string;
   year: number | null;
   coverUrl: string | null;
   pages: number | null;
+  description?: string | null;
+  categories?: string[] | null;
+  googleRating?: number | null;
 };
 
 export type UserBookStatus = "want_to_read" | "reading" | "read" | "dnf";

@@ -5,10 +5,11 @@ import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
 
-import { Star } from "lucide-react";
+import { Pencil, Star } from "lucide-react";
 
 import { BookCard } from "@/components/books/book-card";
 import { SaveBookDrawer } from "@/components/books/save-book-drawer";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getMyBooks } from "@/lib/api/user-books";
 import type { UpdateUserBookInput, UserBook } from "@/types/api";
 
@@ -82,7 +83,18 @@ export function ShelfView() {
       {error ? <p className="text-sm text-red-500">{error}</p> : null}
 
       {isLoadingBooks ? (
-        <p className="text-sm text-gray-400">Loading...</p>
+        <div className="flex flex-col gap-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex h-32 overflow-hidden rounded-xl border border-gray-100 bg-white">
+              <Skeleton className="w-20 shrink-0 self-stretch rounded-none" />
+              <div className="flex flex-1 flex-col gap-2 px-4 py-3.5">
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-3 w-1/3" />
+                <Skeleton className="h-3 w-1/4" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : null}
 
       {!isLoadingBooks && savedBooks.length === 0 ? (
@@ -95,29 +107,37 @@ export function ShelfView() {
         <div className="flex flex-col gap-2">
           {savedBooks.map((savedBook) =>
             savedBook.book ? (
-              <button
+              <BookCard
                 key={savedBook.id}
-                type="button"
-                className="w-full cursor-pointer text-left"
-                onClick={() => setEditingBook(savedBook)}
-              >
-                <BookCard
-                  book={savedBook.book}
-                  action={
-                    savedBook.rating ? (
-                      <div className="flex items-center gap-1 text-sm font-medium text-gray-700">
-                        <span>{savedBook.rating}</span>
-                        <Star className="size-3.5 fill-current text-gray-700" />
-                      </div>
-                    ) : null
-                  }
-                  subtitle={
+                book={savedBook.book}
+                href={`/books/${savedBook.book.id}`}
+                action={
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setEditingBook(savedBook);
+                    }}
+                    className="flex size-8 cursor-pointer items-center justify-center rounded-full border border-gray-200 text-gray-500 transition-colors hover:border-black hover:text-black"
+                    aria-label={`Edit ${savedBook.book.title}`}
+                  >
+                    <Pencil className="size-3.5" />
+                  </button>
+                }
+                subtitle={
+                  <div className="flex items-center gap-2">
                     <span className="text-xs capitalize text-gray-400">
                       {savedBook.status.replaceAll("_", " ")}
                     </span>
-                  }
-                />
-              </button>
+                    {savedBook.rating ? (
+                      <div className="flex items-center gap-0.5 text-xs font-medium text-gray-500">
+                        <span>{savedBook.rating}</span>
+                        <Star className="size-3 fill-current text-gray-500" />
+                      </div>
+                    ) : null}
+                  </div>
+                }
+              />
             ) : null,
           )}
         </div>
