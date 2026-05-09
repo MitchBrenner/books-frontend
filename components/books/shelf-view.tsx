@@ -45,9 +45,11 @@ export function ShelfView() {
   }
 
   const booksRead = savedBooks.filter((b) => b.status === "read").length;
-  const totalPagesRead = savedBooks
-    .filter((b) => b.status === "read" && b.book?.pages)
-    .reduce((sum, b) => sum + (b.book?.pages ?? 0), 0);
+  const totalPagesRead = savedBooks.reduce((sum, b) => {
+    if (b.status === "read") return sum + (b.book?.pages ?? 0);
+    if (b.status === "reading") return sum + (b.currPage ?? 0);
+    return sum;
+  }, 0);
   const currentlyReading = savedBooks.filter((b) => b.status === "reading").length;
 
   const metrics = [

@@ -35,6 +35,7 @@ export type UserBook = {
   status: UserBookStatus;
   rating?: number | null;
   review?: string | null;
+  currPage?: number | null;
   startedAt?: string | null;
   finishedAt?: string | null;
   createdAt?: string;
@@ -47,6 +48,7 @@ export type CreateUserBookInput = {
   status: UserBookStatus;
   rating?: number | null;
   review?: string | null;
+  currPage?: number | null;
   startedAt?: string | null;
   finishedAt?: string | null;
 };
@@ -55,6 +57,7 @@ export type UpdateUserBookInput = {
   status?: UserBookStatus;
   rating?: number | null;
   review?: string | null;
+  currPage?: number | null;
   startedAt?: string | null;
   finishedAt?: string | null;
 };
