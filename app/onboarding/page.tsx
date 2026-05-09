@@ -39,7 +39,14 @@ export default function Onboarding() {
         })
         .eq("id", user.id);
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        if (profileError.code === "23505") {
+          setError("That username is already taken. Please choose another.");
+          setIsSubmitting(false);
+          return;
+        }
+        throw profileError;
+      }
 
       await supabase.auth.updateUser({
         data: {
@@ -122,7 +129,9 @@ export default function Onboarding() {
               {isSubmitting ? "Saving..." : "Get started"}
             </button>
 
-            {error ? <p className="text-sm text-red-500">{error}</p> : null}
+            <p className={`text-sm text-red-500 ${error ? "visible" : "invisible"}`}>
+              {error ?? "placeholder"}
+            </p>
           </form>
         </div>
       </div>
